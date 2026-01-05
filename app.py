@@ -23,7 +23,7 @@ if not GROQ_API_KEY:
 
 # Streamlit Config
 st.set_page_config(
-    page_title="PDF Chat with Groq",
+    page_title="Interactive PDF Assistant",
     page_icon="📄",
     layout="wide"
 )
