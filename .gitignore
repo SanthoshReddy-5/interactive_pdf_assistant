@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+dist/
+build/
+wheels/
+
+# Virtual Environments
+venv/
+env/
+.venv/
+.conda/
+
+# Environment Variables & Secrets
+.env
+.env.*
+*.key
+*.pem
+secrets.yaml
+secrets.json
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs & Cache
+logs/
+*.log
+.cache/
+.tmp/
+
+# Vector Databases
+chroma/
+chromadb/
+faiss_index/
+faiss/
+weaviate/
+qdrant/
+
+# Embeddings & Index Files
+*.index
+*.bin
+*.pkl
+*.pickle
+*.npy
+
+# Uploaded / Processed Documents
+data/raw/
+data/processed/
+data/chunks/
+documents/
+uploads/
+
+# Model Artifacts
+models/
+checkpoints/
+
+# Experiment Tracking
+mlruns/
+wandb/
+tensorboard/
+runs/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker
+*.tar
+docker-compose.override.yml
