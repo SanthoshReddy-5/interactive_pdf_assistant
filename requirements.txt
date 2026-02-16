@@ -1,10 +1,10 @@
 streamlit
-python-dotenv
-langchain
 langchain-community
 langchain-core
-langchain-groq
-pypdf
-faiss-cpu
+langchain-ollama
+langchain-chroma
+chromadb
 sentence-transformers
-langchain-huggingface
+pypdf
+pymupdf
+gTTS
