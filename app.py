@@ -29,6 +29,9 @@ if "qa_chain" not in st.session_state:
 if "suggested_questions" not in st.session_state:
     st.session_state.suggested_questions = []
 
+if "document_chunks" not in st.session_state:
+    st.session_state.document_chunks = None
+
 if "current_file" not in st.session_state:
     st.session_state.current_file = None
 
@@ -54,7 +57,13 @@ with st.sidebar:
 
 
 # Main Interface
-st.title("📄 Interactive PDF Assistant")
+st.markdown(
+    """
+    <h1 style='color: #bf00ff;'>📄 Interactive PDF Assistant</h1>
+    <p style='color: white;'>Upload a PDF document and interact with it in seamlessly</p>
+    """,
+    unsafe_allow_html=True
+)
 
 def process_upload(uploaded_file):
     if uploaded_file is not None:
@@ -63,31 +72,37 @@ def process_upload(uploaded_file):
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
                     tmp_file.write(uploaded_file.getvalue())
                     tmp_file_path = tmp_file.name
-                
-                chunks = rag_engine.process_pdf(tmp_file_path)
-                st.session_state.qa_chain = rag_engine.get_qa_chain()
-                st.session_state.suggested_questions = rag_engine.generate_suggestions(chunks)
-                st.session_state.current_file = uploaded_file.name
-                st.session_state.messages = []
+                try:
+                    chunks = rag_engine.process_pdf(tmp_file_path)
+                    st.session_state.qa_chain = rag_engine.get_qa_chain()
+                    st.session_state.document_chunks = chunks
+                    # Automatically generate suggestions immediately after processing
+                    st.session_state.suggested_questions = rag_engine.generate_suggestions(chunks)
+                    st.session_state.current_file = uploaded_file.name
+                    st.session_state.messages = []
+                    st.success("PDF Processed Successfully!")
+                except Exception as e:
+                    error_msg = str(e)
+                    if "Expected Embeddings to be non-empty" in error_msg:
+                        st.warning("The uploaded PDF appears to be a scanned images document. Please upload a PDF that contains selectable text instead of scanned images.")
+                    else:
+                        st.error(f"An unexpected error occurred: {error_msg}")
+                    st.session_state.current_file = None
                 
                 try:
                     os.unlink(tmp_file_path)
                 except:
                     pass
-                
-            st.success("PDF Processed Successfully!")
 
 process_upload(uploaded_file)
 
 # Handling User Input (via Suggestions or Chat Input)
 user_input = None
 
-# Display Suggested Questions in Expander
+# Display Suggested Questions automatically (Reverted to previous style)
 if st.session_state.suggested_questions:
-    with st.expander("Show Suggested Questions", expanded=False):
-        st.info("Suggested Questions based on your document:")
-        # Display as a list or buttons. 
-        # Using columns might be tight for 5 questions, let's use a vertical list of buttons
+    with st.expander("Suggested Questions", expanded=True):
+        st.info("Here are 5 suggested questions based on your document:")
         for i, question in enumerate(st.session_state.suggested_questions):
             if st.button(question, key=f"suggestion_{i}"):
                 user_input = question
@@ -104,7 +119,11 @@ if user_input:
 # Display Messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+        if message["role"] == "user":
+            st.markdown(f"<div style='color: red;'>\n\n{message['content']}\n\n</div>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<div style='color: lightgreen;'>\n\n{message['content']}\n\n</div>", unsafe_allow_html=True)
+            
         if "audio" in message and message["audio"]:
             st.audio(message["audio"])
 
@@ -112,33 +131,39 @@ for message in st.session_state.messages:
 if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
     if st.session_state.qa_chain:
         with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
-                prompt = st.session_state.messages[-1]["content"]
+            prompt = st.session_state.messages[-1]["content"]
+            
+            try:
+                # Re-implement streaming with explicitly colored HTML wrapper, using padding so markdown parses
+                response_stream = st.session_state.qa_chain.stream(
+                    {"question": prompt, "language": language}
+                )
                 
-                # Contextualize language
-                # We now pass language as a separate input variable to the chain
+                response_text = ""
+                message_placeholder = st.empty()
                 
-                try:
-                    # Pass dictionary with question and language
-                    response_text = st.session_state.qa_chain.invoke(
-                        {"question": prompt, "language": language}
-                    )
-                except Exception as e:
-                    response_text = f"Error generating response: {e}"
-
-                st.markdown(response_text)
+                for chunk in response_stream:
+                    response_text += chunk
+                    message_placeholder.markdown(f"<div style='color: lightgreen;'>\n\n{response_text}▌\n\n</div>", unsafe_allow_html=True)
                 
-                # Audio
-                # Pass language code for Telugu if selected
-                audio_path = text_to_speech(response_text, language)
-                if audio_path:
-                    st.audio(audio_path)
+                # Final render without cursor
+                message_placeholder.markdown(f"<div style='color: lightgreen;'>\n\n{response_text}\n\n</div>", unsafe_allow_html=True)
                 
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": response_text,
-                    "audio": audio_path
-                })
+            except Exception as e:
+                response_text = f"Error generating response: {e}"
+                st.markdown(f"<div style='color: red;'>\n\n{response_text}\n\n</div>", unsafe_allow_html=True)
+            
+            # Audio
+            # Pass language code for Telugu if selected
+            audio_path = text_to_speech(response_text, language)
+            if audio_path:
+                st.audio(audio_path)
+            
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response_text,
+                "audio": audio_path
+            })
     else:
         st.warning("Please upload a PDF first.")
         # Remove the user message since we can't answer it

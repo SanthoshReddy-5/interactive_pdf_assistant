@@ -11,6 +11,20 @@
 
 The **Interactive PDF Assistant** allows users to upload any PDF document and interact with it using natural language. It leverages local LLMs via **Ollama** to provide secure, offline-capable document analysis.
 
+### 🏗️ Architecture Flowchart
+
+```mermaid
+graph TD
+    A[User Uploads PDF] -->|PyMuPDF| B(Text Chunking)
+    B -->|Sentence Transformers| C[(ChromaDB Vector Store)]
+    D[User Asks Question] -->|Embed Query| C
+    C -->|Retrieve Context| E[LangChain RAG Pipeline]
+    E -->|Prompt + Context| F{Ollama local LLM}
+    F -->|Generate Answer| G[Streamlit UI]
+    G -->|Text Display| H[Custom Colored Chat]
+    G -->|gTTS| I[Audio Voice Output]
+```
+
 Key capabilities include:
 - **Multilingual Support**: Ask questions and get responses in **English, Telugu, Hindi, Spanish, French,** and more.
 - **Voice Output**: Listen to the assistant's responses using integrated Text-to-Speech (TTS).
@@ -35,12 +49,15 @@ Upload any PDF, and the app uses `PyMuPDF` to extract text with high fidelity, p
 ### 2. 🧠 **RAG Engine**
 Uses a Retrieval-Augmented Generation pipeline to fetch relevant context chunks from the PDF and generate accurate answers using the local Ollama model.
 
-### 3. 🌐 **Multilingual & Voice-Enabled**
+### 3. ⚙️ **Purely Local Embeddings**
+- Uses `all-MiniLM-L6-v2` downloaded via HuggingFace for lightning-fast, offline document vectorization.
+
+### 4. 🌐 **Multilingual & Voice-Enabled**
 - Select your preferred language from the sidebar.
 - The assistant replies **textually** and **vocally** in that language.
-- Ideal for accessibility and non-English users.
+- Custom Chat UI (User: Orange-Red, Assistant: Green-Yellow).
 
-### 4. 💡 **Auto-Generated Questions**
+### 5. 💡 **Auto-Generated Questions**
 Unsure what to ask? The assistant analyzes the document header/summary and suggests **5 intelligent questions** to kickstart your interaction.
 
 ## 📦 Installation

@@ -1,5 +1,4 @@
 import os
-import tempfile
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -14,7 +13,7 @@ class RAGEngine:
     def __init__(self, model_name="llama3"):
         self.model_name = model_name
         self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=400)
         self.llm = ChatOllama(model=self.model_name)
         self.vectorstore = None
         self.retriever = None
