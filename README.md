@@ -15,14 +15,33 @@ The **Interactive PDF Assistant** allows users to upload any PDF document and in
 
 ```mermaid
 graph TD
-    A[User Uploads PDF] -->|PyMuPDF| B(Text Chunking)
-    B -->|Sentence Transformers| C[(ChromaDB Vector Store)]
-    D[User Asks Question] -->|Embed Query| C
-    C -->|Retrieve Context| E[LangChain RAG Pipeline]
-    E -->|Prompt + Context| F{Ollama local LLM}
-    F -->|Generate Answer| G[Streamlit UI]
-    G -->|Text Display| H[Custom Colored Chat]
-    G -->|gTTS| I[Audio Voice Output]
+A([Start]) --> B[User Uploads PDF]
+
+B --> C{PDF Contains Selectable Text?}
+
+C -- No --> D[Show Message: Upload PDF with selectable text]
+
+D --> Z([End])
+
+C -- Yes --> E[Extract Text from PDF using PyMuPDF]
+
+E --> F[Splitting Documents & Chunking Text]
+
+F --> H[(Generate & Store Embeddings in ChromaDB)]
+
+H --> I[Display the suggested questions]
+
+I --> J{User Asks Question?}
+
+J -- yes --> K[Convert Question to Embedding and Retrieve Relevant Chunks]
+
+K --> L[Send Retrieved Chunks & Question to LLM for generating the final answer]
+
+L --> M[Return Response - Text and Audio in user preferred language]
+
+M -- Ready to next Question --> J
+
+J -- No --> Z([End])
 ```
 
 Key capabilities include:
