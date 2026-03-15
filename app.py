@@ -60,7 +60,7 @@ with st.sidebar:
 st.markdown(
     """
     <h1 style='color: #bf00ff;'>📄 Interactive PDF Assistant</h1>
-    <p style='color: white;'>Upload a PDF document and interact with it in seamlessly</p>
+    <p style='color: white;'>Upload a PDF document and interact with it seamlessly</p>
     """,
     unsafe_allow_html=True
 )
@@ -120,9 +120,9 @@ if user_input:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         if message["role"] == "user":
-            st.markdown(f"<div style='color: red;'>\n\n{message['content']}\n\n</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='color: #ff8c00;'>\n\n{message['content']}\n\n</div>", unsafe_allow_html=True)
         else:
-            st.markdown(f"<div style='color: lightgreen;'>\n\n{message['content']}\n\n</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='color: #ffd400;'>\n\n{message['content']}\n\n</div>", unsafe_allow_html=True)
             
         if "audio" in message and message["audio"]:
             st.audio(message["audio"])
@@ -144,10 +144,10 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "user"
                 
                 for chunk in response_stream:
                     response_text += chunk
-                    message_placeholder.markdown(f"<div style='color: lightgreen;'>\n\n{response_text}▌\n\n</div>", unsafe_allow_html=True)
+                    message_placeholder.markdown(f"<div style='color: #ffd400;'>\n\n{response_text}▌\n\n</div>", unsafe_allow_html=True)
                 
                 # Final render without cursor
-                message_placeholder.markdown(f"<div style='color: lightgreen;'>\n\n{response_text}\n\n</div>", unsafe_allow_html=True)
+                message_placeholder.markdown(f"<div style='color: #ffd400;'>\n\n{response_text}\n\n</div>", unsafe_allow_html=True)
                 
             except Exception as e:
                 response_text = f"Error generating response: {e}"
