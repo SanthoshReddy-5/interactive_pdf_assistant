@@ -12,13 +12,13 @@ def text_to_speech(text, language='en'):
         # Map common language names to gTTS language codes
         lang_map = {
             'English': 'en',
+            'Telugu': 'te',
             'Spanish': 'es',
             'French': 'fr',
             'German': 'de',
             'Hindi': 'hi',
             'Italian': 'it',
-            'Portuguese': 'pt',
-            'Telugu': 'te'
+            'Portuguese': 'pt'
         }
         
         lang_code = lang_map.get(language, 'en')

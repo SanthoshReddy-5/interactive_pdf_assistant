@@ -1,11 +1,9 @@
-import os
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from operator import itemgetter
 
@@ -23,13 +21,7 @@ class RAGEngine:
         loader = PyMuPDFLoader(file_path)
         pages = loader.load()
         chunks = self.text_splitter.split_documents(pages)
-        
-        # Create a temporary directory for ChromaDB to avoid locking issues or use in-memory
-        # For simplicity in this session-based app, we can use an ephemeral client or a temp dir.
-        # However, Chroma requires a persistent directory to be useful across re-runs if desired.
-        # Here we use a simple in-memory approach or just let Chroma handle it.
-        # Actually, for Streamlit, we want to persist it for the session.
-        
+                
         self.vectorstore = Chroma.from_documents(
             documents=chunks,
             embedding=self.embeddings,
@@ -43,7 +35,7 @@ class RAGEngine:
         if not self.retriever:
             return None
 
-        # Updated prompt to strictly enforce language
+        # Prompt
         template = """You are a helpful assistant.
 Answer the question based ONLY on the following context.
 

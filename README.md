@@ -94,8 +94,8 @@ Unsure what to ask? The assistant analyzes the document header/summary and sugge
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-username/interactive-pdf-assistant.git
-   cd interactive-pdf-assistant
+   git clone https://github.com/SanthoshReddy-5/interactive_pdf_assistant.git
+   cd interactive_pdf_assistant
    ```
 
 2. **Install Dependencies**
@@ -105,9 +105,7 @@ Unsure what to ask? The assistant analyzes the document header/summary and sugge
    ```
 
 3. **Run the Application**
-   You can use the provided batch script (Windows) or run manually.
-   - **Windows**: Double-click `start_app.bat`
-   - **Manual**:
+   You can run the streamlit app using the below command.
      ```bash
      streamlit run app.py
      ```
@@ -131,7 +129,6 @@ interactive_pdf_assistant/
 ├── rag_engine.py          # Core RAG logic (Loading, Splitting, Retrieval)
 ├── utils.py               # Utility functions (Text-to-Speech)
 ├── requirements.txt       # Python dependencies
-├── start_app.bat          # Quick launch script for Windows
 └── README.md              # Project documentation
 ```
 

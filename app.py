@@ -45,16 +45,11 @@ with st.sidebar:
     # Language Selector
     language = st.selectbox(
         "Response Language",
-        ["English", "Spanish", "French", "German", "Hindi", "Italian", "Portuguese", "Telugu"]
+        ["English", "Telugu", "Spanish", "French", "German", "Hindi", "Italian", "Portuguese"]
     )
-    
-    # Model Selector - Hidden/Fixed
-    # Fixed to llama3 as requested to remove input
-    # If we need to change model, we might need to invalidate cache or pass params to get_engine
-    model_name = "llama3" 
-    # For now, we assume fixed model or update the cached object (which is tricky with cache_resource)
-    # If we strictly want to support changing models, we'd need get_engine(model_name)
 
+    # Model name
+    model_name = "llama3" 
 
 # Main Interface
 st.markdown(
@@ -99,7 +94,7 @@ process_upload(uploaded_file)
 # Handling User Input (via Suggestions or Chat Input)
 user_input = None
 
-# Display Suggested Questions automatically (Reverted to previous style)
+# Display Suggested Questions automatically
 if st.session_state.suggested_questions:
     with st.expander("Suggested Questions", expanded=True):
         st.info("Here are 5 suggested questions based on your document:")
@@ -134,7 +129,6 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "user"
             prompt = st.session_state.messages[-1]["content"]
             
             try:
-                # Re-implement streaming with explicitly colored HTML wrapper, using padding so markdown parses
                 response_stream = st.session_state.qa_chain.stream(
                     {"question": prompt, "language": language}
                 )
@@ -154,7 +148,6 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "user"
                 st.markdown(f"<div style='color: red;'>\n\n{response_text}\n\n</div>", unsafe_allow_html=True)
             
             # Audio
-            # Pass language code for Telugu if selected
             audio_path = text_to_speech(response_text, language)
             if audio_path:
                 st.audio(audio_path)
