@@ -135,6 +135,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "user"
                 
                 response_text = ""
                 message_placeholder = st.empty()
+                message_placeholder.markdown("<div style='color: #ffd400;'>\n\nAssistant is thinking...\n\n</div>", unsafe_allow_html=True)
                 
                 for chunk in response_stream:
                     response_text += chunk
