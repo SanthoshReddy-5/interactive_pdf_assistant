@@ -11,6 +11,8 @@
 
 The **Interactive PDF Assistant** allows users to upload any PDF document and interact with it using natural language. It leverages local LLMs via **Ollama** to provide secure, offline-capable document analysis.
 
+<img width="1919" height="903" alt="image" src="https://github.com/user-attachments/assets/e3b0f297-3740-4489-a6b0-10f29d29135b" />
+
 ### 🏗️ Architecture Flowchart
 
 ```mermaid
